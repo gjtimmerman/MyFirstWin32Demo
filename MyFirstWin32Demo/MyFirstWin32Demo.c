@@ -13,8 +13,8 @@ LRESULT MyWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		PAINTSTRUCT ps;
 	case WM_PAINT:
 		BeginPaint(hWnd, &ps);
-		Rectangle(ps.hdc,myRect.left,myRect.top,myRect.right,myRect.bottom);
-		EndPaint(hWnd,&ps);
+		Rectangle(ps.hdc, myRect.left, myRect.top, myRect.right, myRect.bottom);
+		EndPaint(hWnd, &ps);
 		break;
 	case WM_LBUTTONDOWN:
 		myRect.right = LOWORD(lParam);
@@ -25,9 +25,39 @@ LRESULT MyWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		break;
 	case WM_COMMAND:
-		if (HIWORD(wParam) == 0 && LOWORD(wParam) == ID_FILE_EXIT)
-			PostQuitMessage(0);
+	{
+		int source = HIWORD(wParam);
+		int item = LOWORD(wParam);
+		if (source == 0 && LOWORD(wParam))
+		{
+			if (item == ID_FILE_EXIT)
+				PostQuitMessage(0);
+			else if (item == ID_FILE_OPEN)
+			{
+				TCHAR fname[180] = { 0 };
+				OPENFILENAME ofn;
+				memset(&ofn, 0, sizeof(OPENFILENAME));
+				ofn.lStructSize = sizeof(OPENFILENAME);
+				ofn.hwndOwner = hWnd;
+				ofn.hInstance = NULL;
+				ofn.lpstrFile = fname;
+				ofn.nMaxFile = 180;
+				if (GetOpenFileName(&ofn))
+				{
+					LPTSTR filename = ofn.lpstrFile;
+					HDC myClientDC = GetDC(hWnd);
+					TextOut(myClientDC, myRect.left + 10, myRect.top + 10, filename,(int)_tcslen(filename));
+					ReleaseDC(hWnd, myClientDC);
+				}
+				else
+				{
+					DWORD error = CommDlgExtendedError();
+					DWORD x = error;
+				}
+			}
+		}
 		break;
+	}
 	}
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
