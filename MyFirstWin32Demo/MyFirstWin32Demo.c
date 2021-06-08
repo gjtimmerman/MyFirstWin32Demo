@@ -5,6 +5,7 @@
 
 HINSTANCE hInst;
 HWND hWndMain;
+RECT myRect = { 10,10,100,100 };
 LRESULT MyWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
@@ -12,11 +13,20 @@ LRESULT MyWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		PAINTSTRUCT ps;
 	case WM_PAINT:
 		BeginPaint(hWnd, &ps);
-		Rectangle(ps.hdc, 10, 10, 100, 100);
+		Rectangle(ps.hdc,myRect.left,myRect.top,myRect.right,myRect.bottom);
 		EndPaint(hWnd,&ps);
+		break;
+	case WM_LBUTTONDOWN:
+		myRect.right = LOWORD(lParam);
+		myRect.bottom = HIWORD(lParam);
+		InvalidateRect(hWnd, NULL, TRUE);
 		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
+		break;
+	case WM_COMMAND:
+		if (HIWORD(wParam) == 0 && LOWORD(wParam) == ID_FILE_EXIT)
+			PostQuitMessage(0);
 		break;
 	}
 	return DefWindowProc(hWnd, msg, wParam, lParam);
