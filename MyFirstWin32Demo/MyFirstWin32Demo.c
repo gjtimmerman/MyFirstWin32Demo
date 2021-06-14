@@ -16,7 +16,9 @@ INT_PTR MyDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		{
 			TCHAR buffer[80];
 			GetDlgItemText(hWnd, IDC_EDIT1, buffer, 80);
-			MessageBox(hWnd, buffer, _T("Dit is de Tekst"), MB_OK);
+			TCHAR caption[80];
+			LoadString(NULL, IDS_STRING103, caption, 80);
+			MessageBox(hWnd, buffer, caption, MB_OK);
 			return TRUE;
 		}
 		else if (cmd == IDC_BUTTON2)
@@ -50,7 +52,7 @@ LRESULT MyWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 		int source = HIWORD(wParam);
 		int item = LOWORD(wParam);
-		if (source == 0 && LOWORD(wParam))
+		if ((source == 0 || source == 1) && LOWORD(wParam))
 		{
 			if (item == ID_FILE_EXIT)
 				PostQuitMessage(0);
@@ -112,11 +114,15 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPTSTR cmdLine, i
 	hWndMain = CreateWindow(MAKEINTATOM(registeredClass), _T("MyWindow"), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, (HWND)NULL, (HMENU)NULL, hInst, (LPVOID)NULL);
 	ShowWindow(hWndMain, SW_SHOWNORMAL);
 	UpdateWindow(hWndMain);
+	HACCEL acceleratorTable = LoadAccelerators(NULL, MAKEINTRESOURCE(IDR_ACCELERATOR1));
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0))
 	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+		if (!TranslateAccelerator(hWndMain, acceleratorTable, &msg))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
 	}
 	return (int)msg.wParam;
 }

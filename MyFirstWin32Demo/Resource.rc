@@ -52,12 +52,12 @@ END
 
 IDR_MENU1 MENU
 BEGIN
-    POPUP "File"
+    POPUP "&File"
     BEGIN
         MENUITEM "New",                         ID_FILE_NEW
         MENUITEM "Open",                        ID_FILE_OPEN
         MENUITEM "Save",                        ID_FILE_SAVE
-        MENUITEM "Exit",                        ID_FILE_EXIT
+        MENUITEM "&Exit\tCtrl+E",               ID_FILE_EXIT
     END
     POPUP "Help"
     BEGIN
@@ -110,6 +110,28 @@ END
 IDD_FORMVIEW AFX_DIALOG_LAYOUT
 BEGIN
     0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_ACCELERATOR1 ACCELERATORS
+BEGIN
+    "E",            ID_FILE_EXIT,           VIRTKEY, CONTROL, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_STRING103           "Dit is de tekst!"
 END
 
 #endif    // English (United States) resources
