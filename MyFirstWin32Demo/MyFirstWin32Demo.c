@@ -34,6 +34,10 @@ LRESULT MyWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
+		int x;
+		int y;
+		HMENU hMenu1;
+		HMENU hMenu2;
 		PAINTSTRUCT ps;
 	case WM_PAINT:
 		BeginPaint(hWnd, &ps);
@@ -47,6 +51,13 @@ LRESULT MyWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
+		break;
+	case WM_CONTEXTMENU:
+		x = LOWORD(lParam);
+		y = HIWORD(lParam);
+		hMenu1 = LoadMenu(NULL, MAKEINTRESOURCE(IDR_MENU2));
+		hMenu2 = GetSubMenu(hMenu1,0 );
+		TrackPopupMenu(hMenu2,TPM_LEFTALIGN|TPM_TOPALIGN|TPM_RIGHTBUTTON, x, y, 0, hWnd, NULL);
 		break;
 	case WM_COMMAND:
 	{
