@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <tchar.h>
 #include "resource.h"
+#include <math.h>
 
 
 HINSTANCE hInst;
@@ -39,9 +40,24 @@ LRESULT MyWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		HMENU hMenu1;
 		HMENU hMenu2;
 		PAINTSTRUCT ps;
+		RECT clientRect;
+		HGDIOBJ prevPen;
 	case WM_PAINT:
 		BeginPaint(hWnd, &ps);
-		Rectangle(ps.hdc, myRect.left, myRect.top, myRect.right, myRect.bottom);
+//		Rectangle(ps.hdc, myRect.left, myRect.top, myRect.right, myRect.bottom);
+		SetMapMode(ps.hdc, MM_ANISOTROPIC);
+		GetClientRect(hWnd, &clientRect);
+		SetWindowOrgEx(ps.hdc, -500, -500, NULL);
+		SetWindowExtEx(ps.hdc, 1000, 1000, NULL);
+		SetViewportExtEx(ps.hdc, clientRect.right, clientRect.bottom, NULL);
+		prevPen = SelectObject(ps.hdc, GetStockObject(BLACK_PEN));
+		MoveToEx(ps.hdc,-500, 0, NULL);
+		LineTo(ps.hdc, 500, 0);
+		MoveToEx(ps.hdc, 0, -500, NULL);
+		LineTo(ps.hdc, 0, 500);
+		for (int d = -500; d < 500; d++)
+			SetPixel(ps.hdc, d, -(int)(sin(d/50.0) * 50), RGB(255, 0, 0));
+		SelectObject(ps.hdc, prevPen);
 		EndPaint(hWnd, &ps);
 		break;
 	case WM_LBUTTONDOWN:
@@ -58,6 +74,9 @@ LRESULT MyWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		hMenu1 = LoadMenu(NULL, MAKEINTRESOURCE(IDR_MENU2));
 		hMenu2 = GetSubMenu(hMenu1,0 );
 		TrackPopupMenu(hMenu2,TPM_LEFTALIGN|TPM_TOPALIGN|TPM_RIGHTBUTTON, x, y, 0, hWnd, NULL);
+		break;
+	case WM_SIZE:
+		InvalidateRect(hWnd, NULL, TRUE);
 		break;
 	case WM_COMMAND:
 	{
