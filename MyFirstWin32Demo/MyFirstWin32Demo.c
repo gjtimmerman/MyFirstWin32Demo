@@ -121,7 +121,7 @@ LRESULT MyWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 
-int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPTSTR cmdLine, int cmdShow)
+int WINAPI _tWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInst,_In_ LPTSTR cmdLine, _In_ int cmdShow)
 {
 	hInst = hInstance;
 	WNDCLASSEX wc;
